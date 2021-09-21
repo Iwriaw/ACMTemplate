@@ -10,6 +10,11 @@ struct TarjanSCC
     void get(vector<int> g[], int n)
     {
         dfsc = sccc = 0;
+        for (int i = 1; i <= n; i++)
+            dfn[i] = siz[i] = 0;
+        for (int i = 1; i <= n; i++)
+            if (dfn[i] == 0)
+                dfs(i, g);
     }
     void dfs(int now, vector<int> g[])
     {
