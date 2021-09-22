@@ -32,13 +32,14 @@ struct Point//二维点、向量类
     {
         return x * x + y * y;
     }
-    Point normal() const//等长法向量，逆时针旋转PI/2。(1,0)->(0,1)
-    {
-        return Point{-y, x};
-    }
     friend double angle(const Point& a, const Point& b)//a->b的逆时针夹角[0, PI]，这里利用点积计算
     {
         return acos(a * b / sqrt(a.len2()) / sqrt(b.len2()));
+    }
+    friend Point rotate(const Point& a, const double& rad)
+    {
+        Point b = {sin(rad), cos(rad)};
+        return {a ^ b, a * b};
     }
 };
 struct Line//二维直线、线段类 基于点类实现
@@ -47,6 +48,10 @@ struct Line//二维直线、线段类 基于点类实现
     friend int posP2L(Point a, Line b)//点和直线的位置关系，通过叉积判断。0：点在直线上，+：点在直线左边，-：点在直线右边
     {
         return (b.b - b.a) ^ (a - b.a);
+    }
+    friend int posP2S(Point a, Line b)//点和线段的位置关系， 1：点在线段内，-1：点在线段端点，0：点不在线段上
+    {
+        
     }
     friend double distP2L(Point a, Line b)//点a到直线b的距离(point to line)。
     {
