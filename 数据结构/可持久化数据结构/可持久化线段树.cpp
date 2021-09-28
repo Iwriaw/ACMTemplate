@@ -1,3 +1,4 @@
+//初步验证正确
 #include <bits/stdc++.h>
 using namespace std;
 struct PSegtree
@@ -10,7 +11,7 @@ struct PSegtree
     vector<int> root;
     void init(int n)
     {
-        t = vector<node>(1);
+        t.clear();
         root.clear();
         root.push_back(build(1, n));
     }
@@ -30,8 +31,9 @@ struct PSegtree
     //若结点更新关系为一颗树，可以把root数组换为root树来查询祖先到后代链上第K大
     int update(int l, int r, int prt, const int& P, const int& V)//在prt线段树基础上位置P加V（因为是权值线段树，本质上是加入V个值P）
     {
+
         t.push_back(node());
-        int rt = t.size() - 1;
+        int rt = t.size() - 1;    
         t[rt].val = t[prt].val + V;
         t[rt].son[0] = t[prt].son[0];
         t[rt].son[1] = t[prt].son[1];
@@ -44,12 +46,11 @@ struct PSegtree
             t[rt].son[1] = update(m + 1, r, t[prt].son[1], P, V);
         return rt;
     }
-    //这里有错误，待修改
     int query(int l, int r, int lrt, int rrt, int k)//rrt - lrt线段树查询第k大
     {
         if (l == r)
             return l;
-        int lval = t[rrt].son[0] - t[lrt].son[0];
+        int lval = t[t[rrt].son[0]].val - t[t[lrt].son[0]].val;
         int m = l + r >> 1;
         int ans = 0;
         if (k <= lval)
@@ -68,15 +69,16 @@ int main()
     for (int i = 1; i <= n; i++)
         cin >> s[i];
     pst.init(10);
+    cout << pst.t.size() << endl;
     for (int i = 1; i <= n; i++)
-        pst.root.push_back(pst.update(1, 10, i - 1, s[i], 1));
+        pst.root.push_back(pst.update(1, 10, pst.root[i - 1], s[i], 1));
     int m;
     cin >> m;
     while (m--)
     {
         int l, r, k;
         cin >> l >> r >> k;
-        cout << pst.query(1, 10, l, r, k) << endl;
+        cout << pst.query(1, 10, pst.root[l - 1], pst.root[r], k) << endl;
     }
     return 0;
 }
